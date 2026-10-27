@@ -11,13 +11,12 @@ from lume.core.target_manager.manager import (
 
 
 def test_target_manager_url_validation():
-    # Valid URLs
+    # Valid URLs with explicit scheme — returned unchanged
     assert TargetManager.validate_target_url("http://localhost:8000") == "http://localhost:8000"
     assert TargetManager.validate_target_url("https://api.example.com/v1") == "https://api.example.com/v1"
 
-    # Missing scheme
-    with pytest.raises(TargetValidationError):
-        TargetManager.validate_target_url("localhost:8000")
+    # Scheme-less input is now normalised to HTTPS instead of rejected
+    assert TargetManager.validate_target_url("localhost:8000") == "https://localhost:8000"
 
     # Unsupported scheme
     with pytest.raises(TargetValidationError):
